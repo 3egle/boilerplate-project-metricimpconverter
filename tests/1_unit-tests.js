@@ -41,10 +41,16 @@ suite("Unit Tests", function () {
     });
 
     suite("function convertHandler.getUnit(input)", function () {
-        test("test for unit", function (done) {
+        test("conver 10L (valid unit)", function (done) {
             let input = "10L";
 
             assert.equal(convertHandler.getUnit(input), "L");
+            done();
+        });
+
+        test("convert 10g (invalid unit)", function (done) {
+            let input = "10g";
+            assert.equal(convertHandler.getUnit(input), undefined);
             done();
         });
     });
@@ -64,7 +70,7 @@ suite("Unit Tests", function () {
     });
 
     suite("function convertHandler.spellOutUnit(unit)", function () {
-        test("text spell out unit", function (done) {
+        test("test spell out unit", function (done) {
             let units = ["gal", "L", "lbs", "kg", "mi", "km"];
             let spellOutUnit = [
                 "gallons",

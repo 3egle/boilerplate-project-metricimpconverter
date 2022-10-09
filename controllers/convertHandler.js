@@ -1,105 +1,98 @@
 function ConvertHandler() {
     /* input = 33.3mi */
+
+    let re = /[a-z]/i;
+
     this.getNum = function (input) {
-        let re = /[a-z]+$/i;
-        let extract = input.split(re.exec(input)).join().split(",").join("");
+        if (!re.test(input)) return "invalid unit";
 
-        if (!/^\d/.test(input)) return 1;
+        let result;
 
-        if (extract.split("/").length >= 3) return undefined;
+        let idx = input.split("").indexOf(input.match(re)[0]);
 
-        if (extract.includes("/")) {
-            let arr = extract.split("/");
+        let value = input.substring(0, idx);
+        if (!value) return 1;
+        let fracArr = value.split("/");
 
-            return Number(arr[0]) / Number(arr[1]);
+        if (idx == 0) return 1;
+
+        if (isNaN(value)) {
+            if (fracArr.length > 2) return;
+            let val = fracArr[0] / fracArr[1];
+            return Number(val);
         } else {
-            return Number(extract);
+            return Number(value);
         }
     };
 
     this.getUnit = function (input) {
-        let re = /[a-z]+$/i;
-        let result = re.exec(input);
+        if (!re.test(input)) return;
 
-        if (!result) return;
-        if (this.spellOutUnit(result[0]))
-            return result[0].toLowerCase() == "l"
-                ? result[0].toUpperCase()
-                : result[0].toLowerCase();
+        let idx = input.split("").indexOf(input.match(re)[0]);
+        let unit = input.substring(idx).toLowerCase();
+
+        if (!this.getReturnUnit(unit)) return;
+
+        return unit == "l" ? unit.toUpperCase() : unit;
     };
     this.getReturnUnit = function (initUnit) {
-        switch (initUnit.toLowerCase()) {
-            case "mi":
-                return "km";
-            case "km":
-                return "mi";
-            case "lbs":
-                return "kg";
-            case "kg":
-                return "lbs";
-            case "gal":
-                return "L";
-            case "l":
-                return "gal";
-            default:
-                return undefined;
-        }
+        let result = {
+            mi: "km",
+            km: "mi",
+            lbs: "kg",
+            kg: "lbs",
+            gal: "L",
+            l: "gal",
+        };
+
+        if (!result[initUnit.toLowerCase()]) return;
+
+        return result[initUnit.toLowerCase()];
     };
 
     this.spellOutUnit = function (unit) {
-        switch (unit.toLowerCase()) {
-            case "mi":
-                return "miles";
-            case "km":
-                return "kilometers";
-            case "gal":
-                return "gallons";
-            case "l":
-                return "liters";
-            case "lbs":
-                return "pounds";
-            case "kg":
-                return "kilograms";
-            default:
-                return undefined;
-        }
+        let result = {
+            mi: "miles",
+            km: "kilometers",
+            gal: "gallons",
+            l: "liters",
+            lbs: "pounds",
+            kg: "kilograms",
+        };
+
+        if (!result[unit.toLowerCase()]) return;
+
+        return result[unit.toLowerCase()];
     };
 
     this.convert = function (initNum, initUnit) {
         const galToL = 3.78541;
         const lbsToKg = 0.453592;
         const miToKm = 1.60934;
-        let result;
-        switch (initUnit.toLowerCase()) {
-            case "gal":
-                result = initNum * galToL;
-                break;
-            case "l":
-                result = initNum / galToL;
-                break;
-            case "lbs":
-                result = initNum * lbsToKg;
-                break;
-            case "kg":
-                result = initNum / lbsToKg;
-                break;
-            case "mi":
-                result = initNum * miToKm;
-                break;
-            case "km":
-                result = initNum / miToKm;
-                break;
-            default:
-                return undefined;
-        }
+        let result = {
+            gal: initNum * galToL,
+            l: initNum / galToL,
+            lbs: initNum * lbsToKg,
+            kg: initNum / lbsToKg,
+            mi: initNum * miToKm,
+            km: initNum / miToKm,
+        };
 
-        return parseFloat(result).toFixed(5);
+        return parseFloat(result[initUnit.toLowerCase()]).toFixed(5);
     };
 
     this.getString = function (initNum, initUnit, returnNum, returnUnit) {
-        return `${initNum} ${this.spellOutUnit(
-            initUnit
-        )} converts to ${returnNum} ${this.spellOutUnit(returnUnit)}`;
+        let result;
+        result =
+            initNum +
+            " " +
+            this.spellOutUnit(initUnit.toLowerCase()) +
+            " converts to " +
+            returnNum +
+            " " +
+            this.spellOutUnit(returnUnit.toLowerCase());
+
+        return result;
     };
 }
 
