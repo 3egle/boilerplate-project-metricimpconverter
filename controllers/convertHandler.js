@@ -20,9 +20,12 @@ function ConvertHandler() {
     this.getUnit = function (input) {
         let re = /[a-z]+$/i;
         let result = re.exec(input);
-        
+
         if (!result) return;
-        if (this.spellOutUnit(result[0])) return result[0];
+        if (this.spellOutUnit(result[0]))
+            return result[0].toLowerCase() == "l"
+                ? result[0].toUpperCase()
+                : result[0].toLowerCase();
     };
     this.getReturnUnit = function (initUnit) {
         switch (initUnit.toLowerCase()) {
